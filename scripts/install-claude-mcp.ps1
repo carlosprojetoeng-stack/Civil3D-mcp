@@ -2,6 +2,7 @@ param(
   [ValidateSet("project", "user", "local")]
   [string]$Scope = "project",
   [string]$ServerName = "civil3d-mcp",
+  [string]$HelpVersion = "2027",
   [switch]$PrintOnly
 )
 
@@ -20,7 +21,7 @@ if (-not (Test-Path $launcherPath)) {
 }
 
 $quotedLauncherPath = '"' + $launcherPath + '"'
-$commandText = "claude mcp add --scope $Scope --transport stdio $ServerName -- $powershellExe -NoProfile -ExecutionPolicy Bypass -File $quotedLauncherPath"
+$commandText = "claude mcp add --scope $Scope --transport stdio -e CIVIL3D_HELP_VERSION=$HelpVersion $ServerName -- $powershellExe -NoProfile -ExecutionPolicy Bypass -File $quotedLauncherPath"
 
 if ($PrintOnly) {
   Write-Output $commandText
@@ -49,7 +50,7 @@ if (-not (Test-Path $buildEntryPath)) {
   }
 }
 
-& $claudeCommand mcp add --scope $Scope --transport stdio $ServerName -- $powershellExe -NoProfile -ExecutionPolicy Bypass -File $launcherPath
+& $claudeCommand mcp add --scope $Scope --transport stdio -e "CIVIL3D_HELP_VERSION=$HelpVersion" $ServerName -- $powershellExe -NoProfile -ExecutionPolicy Bypass -File $launcherPath
 if ($LASTEXITCODE -ne 0) {
   throw "claude mcp add failed."
 }
